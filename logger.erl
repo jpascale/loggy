@@ -7,7 +7,9 @@ start(Nodes) ->
 stop(Logger) ->
 	Logger ! stop.
 
-init(_) ->
+init(Nodes) ->
+	Clock = time:clock(Nodes).
+	Queue = 
 	loop().
 
 loop() ->
