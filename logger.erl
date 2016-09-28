@@ -24,17 +24,27 @@ loop(Queue, Clock) ->
 			loop(NextQueue, NewClock);
 
 		stop ->
+			io:format("Logger ending printing ~w elements from the queue~n", [length(Queue)]),
+			EmptyQueue = print_all(Queue),
+			io:format("Final length of the Queue: ~w ~n", [length(EmptyQueue)]),
 			ok
 	end.
 
 log_print(From, Time, Msg) ->
 	io:format("log: ~w ~w ~p~n", [Time, From, Msg]).
 
+print_all(Queue) ->
+	lists:foldr(fun(Elem, Rest) -> 
+					{From, Time, Msg} = Elem,
+					log_print(From, Time, Msg),
+					Rest
+				end, [], Queue).
+
 queue_add(Name, Time, Msg, []) -> [{Name, Time, Msg}];
 queue_add(Name, Time, Msg, Queue) -> 
 	[First | Rest] = Queue,
 	{_, T, _} = First,
-	if (T >= Time) -> [{Name, Time, Msg} | Queue];
+	if (Time >= T) -> [{Name, Time, Msg} | Queue];
 		true -> [First | queue_add(Name, Time, Msg, Rest)]
 	end.
 	%[{Name, Time, Msg} | Queue].
